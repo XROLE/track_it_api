@@ -2,7 +2,6 @@ package trackit.trackit.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,13 +19,13 @@ public class AuthController {
     private AuthService authService;
 
     @PostMapping("/signup")
-    public ResponseEntity<?> login(@RequestBody SignUpDTO signUpDTO){
+    public ResponseEntity<?> signup(@RequestBody SignUpDTO signUpDTO){
         System.out.println("I am a chosen one, amen ================================> ");
         AppUser newUser = authService.signup(signUpDTO);
         String token = authService.generateToken(newUser);
         return ResponseEntity.ok(new SignupResponse(newUser, token));
     }
-
+   
      // Custom response class for signup
      public static class SignupResponse {
         private AppUser appUser;
