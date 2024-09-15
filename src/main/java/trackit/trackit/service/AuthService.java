@@ -1,15 +1,11 @@
 package trackit.trackit.service;
 
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
-import lombok.AllArgsConstructor;
 import trackit.trackit.dto.SignUpDTO;
 import trackit.trackit.entity.AppUser;
 import trackit.trackit.repository.AppUserRepository;
@@ -26,9 +22,16 @@ public class AuthService {
     private PasswordEncoder passwordEncoder;
 
     public AppUser signup(SignUpDTO signupDTO) {
-        if (repository.existsByUsername(signupDTO.getUsername()) || repository.existsByEmail(signupDTO.getEmail())) {
-            throw new IllegalArgumentException("Email or Username already exist.");
+        if (repository.existsByUsername(signupDTO.getUsername())) {
+            // throw new IllegalArgumentException("Email or Username already exist.");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Username already exists");
         }
+
+        if (repository.existsByEmail(signupDTO.getEmail())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already exists");
+        }
+
+        System.out.println("Proceeding regardless ======================================>");
 
         AppUser user = new AppUser();
         user.setUsername(signupDTO.getUsername());

@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class HomeController {
 
     @GetMapping("/")
-    public String home(){
+    public String getHome(){
         return "Welcome to Track It endpoint. To view documentation visit https://wwww.trackit.dev";
     }
     
