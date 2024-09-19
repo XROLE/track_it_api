@@ -1,5 +1,7 @@
 package trackit.trackit.entity;
 
+import org.springframework.security.core.userdetails.User;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -37,4 +39,8 @@ public class AppUser {
     public void setPassword(String password) {
         this.password = password;
     }
+    public User orElseThrow(Object object) {
+        throw new UnsupportedOperationException("Unimplemented method 'orElseThrow'");
+    }
+   
 }
