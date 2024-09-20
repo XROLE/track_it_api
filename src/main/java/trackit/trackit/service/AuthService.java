@@ -56,6 +56,6 @@ public class AuthService implements UserDetailsService {
     }
 
     public String generateToken(AppUser appUser) {
-        return tokenUtils.generateToken(appUser); // Assume you have a method to generate JWT token
+        return tokenUtils.generateToken(appUser);
     }
 }

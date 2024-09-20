@@ -7,6 +7,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,25 +29,32 @@ public class AuthController {
     private AuthenticationManager authenticationManager;
 
     @PostMapping("/signup")
-    public ResponseEntity<?> signup(@RequestBody SignUpDTO signUpDTO){
+    public ResponseEntity<?> signup(@RequestBody SignUpDTO signUpDTO) {
         System.out.println("I am a chosen one, amen ================================> ");
         AppUser newUser = authService.signup(signUpDTO);
         String token = authService.generateToken(newUser);
-        return ResponseEntity.ok(new SignupResponse(newUser, token));
+        return ResponseEntity.ok(new AuthResponse(newUser, token));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginDO> postMethodName(@RequestBody LoginDO loginDO) {
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginDO.getEmail(), loginDO.getPassword());
+    public ResponseEntity<?> postMethodName(@RequestBody LoginDO loginDO) {
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                loginDO.getEmail(), loginDO.getPassword());
 
         Authentication authentication = authenticationManager.authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        return ResponseEntity.ok().build();
+
+        UserDetails authenticatedUser = (UserDetails) authentication.getPrincipal();
+        AppUser appUser = new AppUser();
+        appUser.setUsername(authenticatedUser.getUsername());
+        appUser.setEmail(loginDO.getEmail());
+
+        String token = authService.generateToken(appUser);
+        return ResponseEntity.ok(new AuthResponse(appUser, token));
     }
-    
-   
-     // Custom response class for signup
-     public static class SignupResponse {
+
+    // Custom response class for signup
+    public static class AuthResponse {
         private AppUser appUser;
         private String token;
 
@@ -66,10 +74,10 @@ public class AuthController {
             this.token = token;
         }
 
-        public SignupResponse(AppUser appUser, String token) {
+        public AuthResponse(AppUser appUser, String token) {
             this.appUser = appUser;
             this.token = token;
         }
     }
-    
+
 }
